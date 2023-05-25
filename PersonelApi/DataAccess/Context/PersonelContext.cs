@@ -9,7 +9,7 @@ public partial class PersonelContext : DbContext
 {
     private readonly IOptions<ApplicationConfig> _config;
 
-    public PersonelContext(DbContextOptions<PersonelContext> options, IOptions<ApplicationConfig>  config)
+    public PersonelContext(DbContextOptions<PersonelContext> options, IOptions<ApplicationConfig> config)
         : base(options)
     {
         _config = config;

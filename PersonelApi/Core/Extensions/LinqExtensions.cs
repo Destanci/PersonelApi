@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
 namespace PersonelApi.Core.Extensions
 {
@@ -23,7 +22,7 @@ namespace PersonelApi.Core.Extensions
             return queryable.ThenByDescending(propetyName.ToLambda<T>());
         }
 
-        public static Expression<Func<T,object>> ToLambda<T>(this string propertyName)
+        public static Expression<Func<T, object>> ToLambda<T>(this string propertyName)
         {
             var parameter = Expression.Parameter(typeof(T));
             var property = Expression.Property(parameter, propertyName);

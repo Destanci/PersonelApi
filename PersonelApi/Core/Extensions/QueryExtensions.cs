@@ -1,5 +1,4 @@
 ﻿using PersonelApi.Models.ApiModels;
-using System.Linq.Expressions;
 using System.Reflection;
 
 namespace PersonelApi.Core.Extensions
@@ -14,16 +13,16 @@ namespace PersonelApi.Core.Extensions
             IOrderedQueryable<T> orderedQuery = query.OrderBy(x => 0);
             try
             {
-                foreach(DataRequestOrder order in orders)
+                foreach (DataRequestOrder order in orders)
                 {
-                    if(order.Column != null && order.Dir != null)
+                    if (order.Column != null && order.Dir != null)
                     {
-                        var propetyInfo = typeof(T).GetProperty(order.Column, 
+                        var propetyInfo = typeof(T).GetProperty(order.Column,
                             BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
 
                         if (propetyInfo != null)
                         {
-                            if(order.Dir.ToLower().Contains("asc"))
+                            if (order.Dir.ToLower().Contains("asc"))
                             {
                                 orderedQuery = orderedQuery.ThenBy(propetyInfo.Name);
                             }
@@ -36,7 +35,8 @@ namespace PersonelApi.Core.Extensions
                     }
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Console.WriteLine(ex.ToString());
                 return query.OrderBy(x => 0);
             }

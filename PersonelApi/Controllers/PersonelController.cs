@@ -19,32 +19,27 @@ namespace PersonelApi.Controllers
             _efEmployeeDal = efEmployeeDal;
         }
 
-
-        [HttpGet]
-        public ActionResult<string> Hi()
+        [HttpGet, Route("Hi", Name = "Hi")]
+        public IActionResult Hi()
         {
-            return "Hello";
+            return Ok("Hello");
         }
 
-        [HttpPost]
+        [HttpPost, Route("GetPersonelList", Name = "GetPersonelList")]
         public IActionResult GetPersonelList([FromBody] DataRequest<EmployeeFM> dataRequest)
         {
-            //if (!ModelState.IsValid)
-            //{
-            //    return "";
-            //}
             var now = DateTime.Now;
 
             var predicate = PredicateBuilder.New<CtEmployee>(true);
 
             // Generate dataRequest.filtering Predicate
-            if (dataRequest.filter != null)
+            if (dataRequest.Filter != null)
             {
-                if (dataRequest.filter.MinAge > 0) predicate.And(x => x.Age > dataRequest.filter.MinAge);
-                if (dataRequest.filter.MaxAge > 0) predicate.And(x => x.Age < dataRequest.filter.MaxAge);
-                if (!string.IsNullOrWhiteSpace(dataRequest.filter.Gender)) predicate.And(x => x.Gender.Description() == dataRequest.filter.Gender);
-                if (dataRequest.filter.DepartmentIds.Count > 0) predicate.And(x => dataRequest.filter.DepartmentIds.Contains(x.DepartmentId));
-                if (dataRequest.filter.PositionIds.Count > 0) predicate.And(x => dataRequest.filter.PositionIds.Contains(x.PositionId));
+                if (dataRequest.Filter.MinAge > 0) predicate.And(x => x.Age > dataRequest.Filter.MinAge);
+                if (dataRequest.Filter.MaxAge > 0) predicate.And(x => x.Age < dataRequest.Filter.MaxAge);
+                if (!string.IsNullOrWhiteSpace(dataRequest.Filter.Gender)) predicate.And(x => x.Gender.Description() == dataRequest.Filter.Gender);
+                if (dataRequest.Filter.DepartmentIds.Count > 0) predicate.And(x => dataRequest.Filter.DepartmentIds.Contains(x.DepartmentId));
+                if (dataRequest.Filter.PositionIds.Count > 0) predicate.And(x => dataRequest.Filter.PositionIds.Contains(x.PositionId));
             }
 
             // Generate Searching Predicate
@@ -73,7 +68,7 @@ namespace PersonelApi.Controllers
 
         // [HttpPost]
         [HttpPost, Route("AddPersonel", Name = "AddPersonel")]
-        public ActionResult<string> AddPersonel([FromBody] List<CtEmployee> list)
+        public IActionResult AddPersonel([FromBody] List<CtEmployee> list)
         {
             foreach (var item in list)
             {
@@ -95,7 +90,7 @@ namespace PersonelApi.Controllers
                     PicturePath = item.PicturePath,
                 });
             }
-            return "Success";
+            return Ok("Success");
         }
     }
 }

@@ -6,44 +6,44 @@ namespace PersonelApi.Core.DataAccess.EntityFramework
     public abstract class EfEntityRepositoryBase<TEntity> : IEntityRepository<TEntity>
         where TEntity : class, IEntity, new()
     {
-        protected DbContext dbContext { get; set; }
+        protected DbContext Context { get; set; }
 
-        public EfEntityRepositoryBase(DbContext dbContext) { this.dbContext = dbContext; }
+        public EfEntityRepositoryBase(DbContext dbContext) { this.Context = dbContext; }
 
         public TEntity Add(TEntity entity)
         {
-            var addedEntity = dbContext.Entry(entity);
+            var addedEntity = Context.Entry(entity);
             addedEntity.State = EntityState.Added;
-            dbContext.SaveChanges();
+            Context.SaveChanges();
             return entity;
         }
 
         public void Delete(TEntity entity)
         {
-            var updatedEntity = dbContext.Entry(entity);
+            var updatedEntity = Context.Entry(entity);
             updatedEntity.State = EntityState.Deleted;
-            dbContext.SaveChanges();
+            Context.SaveChanges();
         }
 
         public TEntity Update(TEntity entity)
         {
-            var updatedEntity = dbContext.Entry(entity);
+            var updatedEntity = Context.Entry(entity);
             updatedEntity.State = EntityState.Modified;
-            dbContext.SaveChanges();
+            Context.SaveChanges();
             return entity;
         }
 
 
         public TEntity? Get(Expression<Func<TEntity, bool>> filter)
         {
-            return dbContext.Set<TEntity>()
+            return Context.Set<TEntity>()
                 .AsNoTracking()
                 .SingleOrDefault(filter);
         }
 
         public List<TEntity> GetList(Expression<Func<TEntity, bool>> filter)
         {
-            return dbContext.Set<TEntity>()
+            return Context.Set<TEntity>()
                 .Where(filter)
                 .AsNoTracking()
                 .ToList();
@@ -51,7 +51,7 @@ namespace PersonelApi.Core.DataAccess.EntityFramework
 
         public int Count(Expression<Func<TEntity, bool>> filter)
         {
-            return dbContext.Set<TEntity>()
+            return Context.Set<TEntity>()
                 .Where(filter)
                 .Count();
         }

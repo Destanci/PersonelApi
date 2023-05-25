@@ -20,7 +20,7 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "Proje", Version = "v1", Description = "rpje" });
     options.DescribeAllParametersInCamelCase();
-   
+
 
 });
 

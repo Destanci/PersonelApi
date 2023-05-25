@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PersonelApi.Core.DataAccess;
 using PersonelApi.Core.DataAccess.EntityFramework;
 using PersonelApi.Core.Extensions;
 using PersonelApi.Models.ApiModels;
@@ -20,7 +19,7 @@ namespace PersonelApi.DataAccess
         public List<CtEmployee> GetDataList(Expression<Func<CtEmployee, bool>> filter, DataRequest<EmployeeFM> request)
         {
             var now = DateTime.Now;
-            IQueryable<CtEmployee> data = dbContext.Set<Employee>()
+            IQueryable<CtEmployee> data = Context.Set<Employee>()
                 .Include(x => x.Department)
                 .Include(x => x.Position)
                 .Select(x => new CtEmployee()
@@ -46,15 +45,15 @@ namespace PersonelApi.DataAccess
                 })
                 .Where(filter).GenerateDataOrder(request.Order);
 
-            if(request.Start > 0) data = data.Skip(request.Start);
-            if(request.Length > 0) data = data.Take(request.Length);
+            if (request.Start > 0) data = data.Skip(request.Start);
+            if (request.Length > 0) data = data.Take(request.Length);
             return data.ToList();
         }
 
         public int CtCount(Expression<Func<CtEmployee, bool>> filter)
         {
             var now = DateTime.Now;
-            return dbContext.Set<Employee>()
+            return Context.Set<Employee>()
                 .Include(x => x.Department)
                 .Include(x => x.Position)
                 .Select(x => new CtEmployee()
