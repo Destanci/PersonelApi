@@ -48,5 +48,12 @@ namespace PersonelApi.Core.DataAccess.EntityFramework
                 .AsNoTracking()
                 .ToList();
         }
+
+        public int Count(Expression<Func<TEntity, bool>> filter)
+        {
+            return dbContext.Set<TEntity>()
+                .Where(filter)
+                .Count();
+        }
     }
 }

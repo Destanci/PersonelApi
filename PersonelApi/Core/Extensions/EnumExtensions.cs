@@ -13,5 +13,10 @@ namespace PersonelApi.Core.Extensions
             }
             throw new ArgumentException("Item not found.", nameof(enumValue));
         }
+
+        public static string ToString(this Enum enumValue)
+        {
+            return enumValue.Description();
+        }
     }
 }

@@ -8,6 +8,5 @@ namespace PersonelApi.Core.Enums
         Male,
         [Description("Female")]
         Female,
-
     }
 }

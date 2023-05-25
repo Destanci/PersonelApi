@@ -7,7 +7,7 @@
             int years = endDate.Year - startDate.Year;
 
             if (startDate.Month == endDate.Month &&
-                endDate.Day < startDate.Day
+                endDate.Day < startDate!.Day
                 || endDate.Month < startDate.Month)
             {
                 years--;

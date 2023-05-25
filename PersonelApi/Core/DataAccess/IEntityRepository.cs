@@ -12,5 +12,6 @@ namespace PersonelApi.Core.DataAccess
 
         T? Get(Expression<Func<T, bool>> filter);
         List<T> GetList(Expression<Func<T, bool>> filter);
+        int Count(Expression<Func<T, bool>> filter);
     }
 }

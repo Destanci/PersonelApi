@@ -1,15 +1,15 @@
 ﻿using LinqKit;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using PersonelApi.Core.Extensions;
 using PersonelApi.DataAccess;
 using PersonelApi.Models.ApiModels;
+using PersonelApi.Models.ComplexTypes;
 using PersonelApi.Models.Entities;
 using PersonelApi.Models.FilterModels;
 
 namespace PersonelApi.Controllers
 {
-    [ApiController]
+    [Route("api/[controller]/[action]")]
     public class PersonelController : ControllerBase
     {
         private readonly EfEmployeeDal _efEmployeeDal;
@@ -19,26 +19,37 @@ namespace PersonelApi.Controllers
             _efEmployeeDal = efEmployeeDal;
         }
 
-        [HttpPost]
-        public ActionResult<string> GetPersonelList(DataRequest dataRequest, EmployeeFM filter)
+
+        [HttpGet]
+        public ActionResult<string> Hi()
         {
-            if(!ModelState.IsValid)
-            {
-                return Forbid();
-            }
+            return "Hello";
+        }
+
+        [HttpPost]
+        public IActionResult GetPersonelList([FromBody] DataRequest<EmployeeFM> dataRequest)
+        {
+            //if (!ModelState.IsValid)
+            //{
+            //    return "";
+            //}
             var now = DateTime.Now;
 
-            var predicate = PredicateBuilder.New<Employee>(true);
+            var predicate = PredicateBuilder.New<CtEmployee>(true);
 
-            // Generate Filtering Predicate
-            if (filter.MinAge > 0) predicate.And(x => x.BirthdayDate.GetDifferenceInYears(now) > filter.MinAge);
-            if (filter.MaxAge > 0) predicate.And(x => x.BirthdayDate.GetDifferenceInYears(now) > filter.MaxAge);
-            if(!string.IsNullOrWhiteSpace(filter.Gender)) predicate.And(x => x.Gender.Description() == filter.Gender);
-            if (filter.DepartmentIds.Count > 0) predicate.And(x => filter.DepartmentIds.Contains(x.DepartmentId));
-            if (filter.PositionIds.Count > 0) predicate.And(x => filter.PositionIds.Contains(x.PositionId));
+            // Generate dataRequest.filtering Predicate
+            if (dataRequest.filter != null)
+            {
+                if (dataRequest.filter.MinAge > 0) predicate.And(x => x.Age > dataRequest.filter.MinAge);
+                if (dataRequest.filter.MaxAge > 0) predicate.And(x => x.Age < dataRequest.filter.MaxAge);
+                if (!string.IsNullOrWhiteSpace(dataRequest.filter.Gender)) predicate.And(x => x.Gender.Description() == dataRequest.filter.Gender);
+                if (dataRequest.filter.DepartmentIds.Count > 0) predicate.And(x => dataRequest.filter.DepartmentIds.Contains(x.DepartmentId));
+                if (dataRequest.filter.PositionIds.Count > 0) predicate.And(x => dataRequest.filter.PositionIds.Contains(x.PositionId));
+            }
 
             // Generate Searching Predicate
-            if (!string.IsNullOrWhiteSpace(dataRequest.Search?.Value)) {
+            if (!string.IsNullOrWhiteSpace(dataRequest.Search?.Value))
+            {
                 var searchlist = dataRequest.Search?.Value?.Split(' ').ToList()!;
                 predicate.And(x => searchlist.Contains(x.Name!));
                 predicate.And(x => searchlist.Contains(x.Surname!));
@@ -47,17 +58,44 @@ namespace PersonelApi.Controllers
                 predicate.And(x => searchlist.Contains(x.Email!));
             }
 
-            var data = _efEmployeeDal.GetDataList(predicate, dataRequest!);
+            var data = _efEmployeeDal.GetDataList(predicate, dataRequest);
 
             var response = new DataResponse()
             {
                 Data = data,
                 Draw = dataRequest.Draw,
-                RecordsFiltered = 0,
-                RecordsTotal = 0,
+                RecordsFiltered = _efEmployeeDal.CtCount(predicate),
+                RecordsTotal = _efEmployeeDal.Count(x => true),
             };
 
-            return JsonConvert.SerializeObject(response);
+            return Ok(response);
+        }
+
+        // [HttpPost]
+        [HttpPost, Route("AddPersonel", Name = "AddPersonel")]
+        public ActionResult<string> AddPersonel([FromBody] List<CtEmployee> list)
+        {
+            foreach (var item in list)
+            {
+                item.Id = 0;
+                _efEmployeeDal.Add(new Employee()
+                {
+                    Name = item.Name,
+                    Surname = item.Surname,
+                    BirthdayDate = item.BirthdayDate,
+                    Gender = item.Gender,
+                    Email = item.Email,
+                    Phone = item.Phone,
+                    Address = item.Address,
+                    DepartmentId = item.DepartmentId,
+                    PositionId = item.PositionId,
+                    Title = item.Title,
+                    HireDate = item.HireDate,
+                    About = item.About,
+                    PicturePath = item.PicturePath,
+                });
+            }
+            return "Success";
         }
     }
 }

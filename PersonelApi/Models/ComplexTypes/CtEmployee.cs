@@ -12,6 +12,7 @@ namespace PersonelApi.Models.ComplexTypes
         public string? Email { get; set; }
         public string? Phone { get; set; }
         public string? Address { get; set; }
+        public int? Age { get; set; }
 
         public int DepartmentId { get; set; }
         public string? DepartmentName { get; set; }
@@ -19,7 +20,7 @@ namespace PersonelApi.Models.ComplexTypes
         public string? PositionName { get; set; }
 
         public string? Title { get; set; }
-        public DateTime? HireDate { get; set; }
+        public DateTime HireDate { get; set; }
         public string? About { get; set; }
         public string? PicturePath { get; set; }
 
