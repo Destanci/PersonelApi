@@ -19,12 +19,6 @@ namespace PersonelApi.Controllers
             _efEmployeeDal = efEmployeeDal;
         }
 
-        [HttpGet, Route("Hi", Name = "Hi")]
-        public IActionResult Hi()
-        {
-            return Ok("Hello");
-        }
-
         [HttpPost, Route("GetPersonelList", Name = "GetPersonelList")]
         public IActionResult GetPersonelList([FromBody] DataRequest<EmployeeFM> dataRequest)
         {
@@ -66,9 +60,8 @@ namespace PersonelApi.Controllers
             return Ok(response);
         }
 
-        // [HttpPost]
-        [HttpPost, Route("AddPersonel", Name = "AddPersonel")]
-        public IActionResult AddPersonel([FromBody] List<CtEmployee> list)
+        [HttpPost, Route("CreateList", Name = "CreateList")]
+        public IActionResult CreateList([FromBody] List<CtEmployee> list)
         {
             foreach (var item in list)
             {
@@ -90,6 +83,73 @@ namespace PersonelApi.Controllers
                     PicturePath = item.PicturePath,
                 });
             }
+            return Ok("Success");
+        }
+
+        [HttpPost, Route("Create", Name = "Create")]
+        public IActionResult Create([FromBody] CtEmployee item)
+        {
+            item.Id = 0;
+            _efEmployeeDal.Add(new Employee()
+            {
+                Name = item.Name,
+                Surname = item.Surname,
+                BirthdayDate = item.BirthdayDate,
+                Gender = item.Gender,
+                Email = item.Email,
+                Phone = item.Phone,
+                Address = item.Address,
+                DepartmentId = item.DepartmentId,
+                PositionId = item.PositionId,
+                Title = item.Title,
+                HireDate = item.HireDate,
+                About = item.About
+            });
+            return Ok("Success");
+        }
+
+        [HttpPost, Route("Update", Name = "Update")]
+        public IActionResult Update([FromBody] CtEmployee item)
+        {
+            if(!ModelState.IsValid)
+            {
+                return Forbid();
+            }
+
+            var entity = _efEmployeeDal.Get(x => x.Id == item.Id);
+            if (entity != null)
+            {
+                entity.Name = item.Name;
+                entity.Surname = item.Surname;
+                entity.BirthdayDate = item.BirthdayDate; ;
+                entity.Gender = item.Gender;
+                entity.Email = item.Email;
+                entity.Phone = item.Phone;
+                entity.Address = item.Address;
+                entity.DepartmentId = item.DepartmentId;
+                entity.PositionId = item.PositionId;
+                entity.Title = item.Title;
+                entity.HireDate = item.HireDate;
+                entity.About = item.About;
+
+                _efEmployeeDal.Update(entity);
+            }
+            return Ok("Success");
+        }
+
+        [HttpPost, Route("Remove", Name = "Remove")]
+        public IActionResult Remove([FromBody] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Forbid();
+            }
+            var entity = _efEmployeeDal.Get(x => x.Id == id);
+            if(entity != null)
+            {
+                _efEmployeeDal.Delete(entity);
+            }
+
             return Ok("Success");
         }
     }
