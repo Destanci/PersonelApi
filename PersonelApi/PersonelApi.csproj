@@ -16,4 +16,9 @@
   <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\Employee\1\" />
+    <Folder Include="wwwroot\Apk\" />
+  </ItemGroup>
+
 </Project>

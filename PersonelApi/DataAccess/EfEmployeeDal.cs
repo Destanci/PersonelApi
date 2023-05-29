@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PersonelApi.Core.DataAccess.EntityFramework;
+using PersonelApi.Core.Enums;
 using PersonelApi.Core.Extensions;
 using PersonelApi.Models.ApiModels;
 using PersonelApi.Models.ComplexTypes;
@@ -32,6 +33,7 @@ namespace PersonelApi.DataAccess
                     BirthdayDate = x.BirthdayDate,
                     Email = x.Email,
                     Gender = x.Gender,
+                    GenderName = x.Gender.ToString(),
                     HireDate = x.HireDate,
                     Phone = x.Phone,
                     PicturePath = x.PicturePath,
@@ -66,6 +68,7 @@ namespace PersonelApi.DataAccess
                     BirthdayDate = x.BirthdayDate,
                     Email = x.Email,
                     Gender = x.Gender,
+                    GenderName = x.Gender.ToString(),
                     HireDate = x.HireDate,
                     Phone = x.Phone,
                     PicturePath = x.PicturePath,

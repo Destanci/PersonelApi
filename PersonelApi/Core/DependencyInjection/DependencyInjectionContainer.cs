@@ -16,6 +16,8 @@ namespace PersonelApi.Core.DependencyInjection
             services.AddDbContext<DbContext, PersonelContext>();
 
             services.AddScoped<EfEmployeeDal>();
+            services.AddScoped<EfDepartmentDal>();
+            services.AddScoped<EfPositionDal>();
 
             return services;
         }

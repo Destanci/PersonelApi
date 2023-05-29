@@ -1,4 +1,5 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Microsoft.Extensions.FileProviders;
+using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
 using PersonelApi.Core;
 using PersonelApi.Core.DependencyInjection;
@@ -37,14 +38,14 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseStaticFiles();
+app.UseStaticFiles(); 
 
 
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
-    options.DocumentTitle = "Konya Kart Rest Api";
+    options.DocumentTitle = "PersonelApp Rest Api";
 });
 
 app.UseRouting();

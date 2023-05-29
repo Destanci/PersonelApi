@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PersonelApi.DataAccess;
+using PersonelApi.Models.ApiModels;
 using PersonelApi.Models.Entities;
+using System;
 
 namespace PersonelApi.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [ApiController]
     public class PositionController : Controller
     {
         private readonly EfPositionDal _efPositionDal;
@@ -14,57 +16,93 @@ namespace PersonelApi.Controllers
             _efPositionDal = efPositionDal;
         }
 
-        [HttpPost, Route("GetList", Name = "GetList")]
+        [HttpPost, Route("api/[controller]/GetList", Name = "[controller]/GetList")]
         public IActionResult GetList()
         {
-            var data = _efPositionDal.GetList(x => true);
+            try
+            {
+                var data = _efPositionDal.GetList(x => true);
+                var count = data.Count();
+                var response = new DataResponse()
+                {
+                    Draw = 0,
+                    Data = data,
+                    RecordsFiltered = count,
+                    RecordsTotal = count,
+                };
 
-            return Ok(data);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return Ok(new Dictionary<String, dynamic>() { { "Result", "Failed: " + ex.Message } });
+            }
         }
 
-        [HttpPost, Route("Create", Name = "Create")]
+        [HttpPost, Route("api/[controller]/Create", Name = "[controller]/Create")]
         public IActionResult Create([FromBody] Position item)
         {
-            item.Id = 0;
-            _efPositionDal.Add(new Position()
+            try
             {
-                Name = item.Name,
-            });
-            return Ok("Success");
+                item.Id = 0;
+                _efPositionDal.Add(new Position()
+                {
+                    Name = item.Name,
+                });
+                return Ok(new Dictionary<String, dynamic>() { { "Result", "Success" } });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new Dictionary<String, dynamic>() { { "Result", "Failed: " + ex.Message } });
+            }
         }
 
-        [HttpPost, Route("Update", Name = "Update")]
+        [HttpPost, Route("api/[controller]/Update", Name = "[controller]/Update")]
         public IActionResult Update([FromBody] Position item)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return Forbid();
-            }
+                if (!ModelState.IsValid)
+                {
+                    return Forbid();
+                }
 
-            var entity = _efPositionDal.Get(x => x.Id == item.Id);
-            if (entity != null)
+                var entity = _efPositionDal.Get(x => x.Id == item.Id);
+                if (entity != null)
+                {
+                    entity.Name = item.Name;
+
+                    _efPositionDal.Update(entity);
+                }
+                return Ok(new Dictionary<String, dynamic>() { { "Result", "Success" } });
+            }
+            catch (Exception ex)
             {
-                entity.Name = item.Name;
-
-                _efPositionDal.Update(entity);
+                return Ok(new Dictionary<String, dynamic>() { { "Result", "Failed: " + ex.Message } });
             }
-            return Ok("Success");
         }
 
-        [HttpPost, Route("Remove", Name = "Remove")]
+        [HttpPost, Route("api/[controller]/Remove", Name = "[controller]/Remove")]
         public IActionResult Remove([FromBody] int id)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return Forbid();
-            }
-            var entity = _efPositionDal.Get(x => x.Id == id);
-            if (entity != null)
-            {
-                _efPositionDal.Delete(entity);
-            }
+                if (!ModelState.IsValid)
+                {
+                    return Forbid();
+                }
+                var entity = _efPositionDal.Get(x => x.Id == id);
+                if (entity != null)
+                {
+                    _efPositionDal.Delete(entity);
+                }
 
-            return Ok("Success");
+                return Ok(new Dictionary<String, dynamic>() { { "Result", "Success" } });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new Dictionary<String, dynamic>() { { "Result", "Failed: " + ex.Message } });
+            }
         }
     }
 }
